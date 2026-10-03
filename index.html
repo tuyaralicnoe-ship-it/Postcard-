@@ -18,7 +18,7 @@ img{user-select:none;-webkit-user-drag:none}
 
 #start{
   display:grid;place-items:center;text-align:center;padding:24px;
-  background-image:url("assets/start_phone.webp");
+  background-image:url("start_phone.webp");
   background-size:cover;background-position:center;
 }
 .startbox{
@@ -35,7 +35,7 @@ img{user-select:none;-webkit-user-drag:none}
 
 #builder{
   display:none;min-height:100dvh;
-  background-image:url("assets/ui_phone.webp");
+  background-image:url("ui_phone.webp");
   background-size:cover;background-position:center;
 }
 header{
@@ -109,8 +109,8 @@ input{width:100%;min-height:50px;border:1px solid #d5c7ba;border-radius:12px;pad
 
 
 @media(min-width:600px) and (max-width:900px){
- #start{background-image:url("assets/start_wide.webp")}
- #builder{background-image:url("assets/ui_wide.webp")}
+ #start{background-image:url("start_wide.webp")}
+ #builder{background-image:url("ui_wide.webp")}
  .workspace{grid-template-columns:minmax(300px,380px) 1fr;align-items:start;gap:22px}
  .card{width:100%;max-width:360px}
  .choices{grid-template-columns:repeat(2,1fr)}
@@ -118,8 +118,8 @@ input{width:100%;min-height:50px;border:1px solid #d5c7ba;border-radius:12px;pad
 }
 
 @media(min-width:901px){
- #start{background-image:url("assets/start_wide.webp")}
- #builder{background-image:url("assets/ui_wide.webp")}
+ #start{background-image:url("start_wide.webp")}
+ #builder{background-image:url("ui_wide.webp")}
  main{padding:20px 24px 96px}
  .workspace{grid-template-columns:minmax(360px,440px) 1fr;align-items:start;gap:30px}
  .preview{justify-content:flex-start}
@@ -176,7 +176,7 @@ input{width:100%;min-height:50px;border:1px solid #d5c7ba;border-radius:12px;pad
 </section>
 
 <script>
-const A = {"bg1": "assets/bg1.webp", "bg2": "assets/bg2.webp", "bg3": "assets/bg3.webp", "bunny": "assets/bunny.webp", "doll": "assets/doll.webp", "robot": "assets/robot.webp", "school": "assets/school.webp", "cake": "assets/cake.webp", "bouquet": "assets/bouquet.webp", "gift": "assets/gift.webp", "balloons": "assets/balloons.webp", "p1": "assets/p1.webp", "p2": "assets/p2.webp", "p3": "assets/p3.webp"};
+const A = {"bg1": "bg1.webp", "bg2": "bg2.webp", "bg3": "bg3.webp", "bunny": "bunny.webp", "doll": "doll.webp", "robot": "robot.webp", "school": "school.webp", "cake": "cake.webp", "bouquet": "bouquet.webp", "gift": "gift.webp", "balloons": "balloons.webp", "p1": "p1.webp", "p2": "p2.webp", "p3": "p3.webp"};
 const state = {step:0,bg:null,hero:null,details:[],phrase:null,recipient:"",author:""};
 const steps = [
   {type:"bg",title:"Выбери фон",hint:"Выбери один из трёх фонов."},
