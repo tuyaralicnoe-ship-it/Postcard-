@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Собери открытку</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#4b3428}
+body{background:#f6efe7}
+button,input{font:inherit}
+img{user-select:none;-webkit-user-drag:none}
+.screen{min-height:100dvh}
+
+#start{
+  display:grid;place-items:center;text-align:center;padding:24px;
+  background-image:url("assets/start_phone.webp");
+  background-size:cover;background-position:center;
+}
+.startbox{
+  max-width:560px;padding:24px 18px;background:rgba(255,250,243,.84);
+  border:1px solid rgba(120,85,55,.15);border-radius:28px;
+  box-shadow:0 12px 35px rgba(90,60,40,.12)
+}
+.startbox h1{font-size:clamp(36px,10vw,64px);margin:0 0 10px}
+.startbox p{font-size:clamp(17px,4vw,22px);margin:0 0 22px}
+
+.btn{border:0;border-radius:16px;padding:14px 22px;font-weight:800;min-height:52px;cursor:pointer}
+.primary{background:#b7644f;color:white}
+.secondary{background:#fffaf4;color:#5c4031;border:1px solid #d9c7b7}
+
+#builder{
+  display:none;min-height:100dvh;
+  background-image:url("assets/ui_phone.webp");
+  background-size:cover;background-position:center;
+}
+header{
+  position:sticky;top:0;z-index:10;background:rgba(255,249,241,.92);
+  backdrop-filter:blur(8px);padding:10px 14px;border-bottom:1px solid #e5d8cb
+}
+.head{max-width:1180px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.title{font-weight:900;font-size:20px}
+.progress{background:white;border:1px solid #dfd1c5;border-radius:999px;padding:6px 10px;font-weight:800}
+main{max-width:1180px;margin:auto;padding:14px 14px 96px}
+h2{text-align:center;font-size:clamp(24px,6vw,34px);margin:4px 0 4px}
+.hint{text-align:center;margin:0 0 14px;color:#77665b}
+.workspace{display:grid;grid-template-columns:1fr;gap:16px}
+.preview{display:flex;justify-content:center}
+
+.card{
+  position:relative;width:min(76vw,360px);aspect-ratio:148/210;overflow:hidden;
+  border-radius:14px;box-shadow:0 12px 30px rgba(70,45,30,.18);background:white
+}
+.layerimg{position:absolute;max-width:none}
+.bg{inset:0;width:100%;height:100%;object-fit:cover}
+.phrase{left:50%;top:6%;transform:translateX(-50%);width:82%;height:18%;object-fit:contain;z-index:5}
+.hero{left:50%;top:50%;transform:translate(-50%,-50%);width:42%;height:44%;object-fit:contain;z-index:3}
+.deco{object-fit:contain;z-index:4}
+.pos0{left:2%;bottom:6%;width:31.7%;height:27.4%}
+.pos1{right:2%;bottom:6%;width:31.7%;height:27.4%}
+.pos2{right:2.5%;top:31.5%;width:27.4%;height:23.0%}
+
+
+.recipientPlain{
+  position:absolute;z-index:6;left:50%;top:24%;transform:translateX(-50%);
+  max-width:76%;text-align:center;
+  font-family:"Caveat","Trebuchet MS","Arial Rounded MT Bold",sans-serif;
+  font-weight:700;letter-spacing:.01em;
+  color:#b05a76;
+  text-shadow:0 1px 0 rgba(255,255,255,.95), 0 0 10px rgba(255,255,255,.85);
+  font-size:clamp(22px,5.6vw,30px);
+}
+
+.name{
+  position:absolute;z-index:6;left:50%;transform:translateX(-50%);
+  display:inline-block;max-width:72%;
+  padding:0;background:transparent;border:none;box-shadow:none;backdrop-filter:none;
+  text-align:center;font-family:"Caveat","Trebuchet MS","Arial Rounded MT Bold",sans-serif;
+  font-weight:600;letter-spacing:.01em;color:#7b1e3a
+}
+.recipient{top:24%;font-size:clamp(16px,4.4vw,22px)}
+.author{bottom:21%;font-size:clamp(21px,5vw,28px)}
+
+.choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.details{grid-template-columns:repeat(2,minmax(0,1fr))}
+.choice{
+  background:rgba(255,253,249,.96);border:2px solid transparent;border-radius:16px;
+  padding:8px;min-height:104px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 5px 14px rgba(80,50,30,.09)
+}
+.choice.selected{border-color:#b65f4c;box-shadow:0 0 0 3px rgba(182,95,76,.12)}
+.thumb{width:100%;height:78px;object-fit:contain;border-radius:10px}
+.bgthumb{object-fit:cover}
+
+.form{background:rgba(255,253,249,.95);border-radius:18px;padding:14px;max-width:520px;margin:auto}
+label{display:block;font-weight:800;margin:10px 0 5px}
+input{width:100%;min-height:50px;border:1px solid #d5c7ba;border-radius:12px;padding:10px 12px;font-size:18px;background:white}
+
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,249,241,.95);backdrop-filter:blur(8px);padding:10px 14px max(10px,env(safe-area-inset-bottom));border-top:1px solid #e5d8cb}
+.navin{max-width:1180px;margin:auto;display:grid;grid-template-columns:1fr 1.4fr;gap:10px}
+
+.final{display:none;text-align:center}
+.final .card{margin:0 auto 14px;width:min(82vw,430px)}
+.finalactions{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:430px;margin:auto}
+
+
+@media(min-width:600px) and (max-width:900px){
+ #start{background-image:url("assets/start_wide.webp")}
+ #builder{background-image:url("assets/ui_wide.webp")}
+ .workspace{grid-template-columns:minmax(300px,380px) 1fr;align-items:start;gap:22px}
+ .card{width:100%;max-width:360px}
+ .choices{grid-template-columns:repeat(2,1fr)}
+ .details{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(min-width:901px){
+ #start{background-image:url("assets/start_wide.webp")}
+ #builder{background-image:url("assets/ui_wide.webp")}
+ main{padding:20px 24px 96px}
+ .workspace{grid-template-columns:minmax(360px,440px) 1fr;align-items:start;gap:30px}
+ .preview{justify-content:flex-start}
+ .card{width:100%;max-width:420px;position:sticky;top:76px}
+ .choices{gap:14px}
+ .choice{min-height:128px}
+ .thumb{height:92px}
+ .details{grid-template-columns:repeat(3,1fr)}
+}
+
+@media print{
+  @page{size:A5 portrait;margin:0}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+<section id="start" class="screen">
+  <div class="startbox">
+    <h1>Собери открытку</h1>
+    <p>Выбери детали и создай свою открытку</p>
+    <button class="btn primary" onclick="startGame()">Начать</button>
+  </div>
+</section>
+
+<section id="builder">
+  <header><div class="head"><div class="title">Собери открытку</div><div class="progress" id="progress">1 / 5</div></div></header>
+  <main>
+    <div id="work">
+      <h2 id="stepTitle"></h2>
+      <p class="hint" id="hint"></p>
+      <div class="workspace">
+        <div class="preview"><div class="card" id="card"></div></div>
+        <div id="panel"></div>
+      </div>
+    </div>
+
+    <div class="final" id="final">
+      <h2>Открытка готова!</h2>
+      <div class="card" id="finalCard"></div>
+      <div class="finalactions">
+        <button class="btn secondary" onclick="restart()">Собрать ещё</button>
+        <button class="btn primary" onclick="downloadCard()">Скачать</button>
+      </div>
+    </div>
+  </main>
+
+  <div class="nav" id="nav">
+    <div class="navin">
+      <button class="btn secondary" id="back">Назад</button>
+      <button class="btn primary" id="next">Далее</button>
+    </div>
+  </div>
+</section>
+
+<script>
+const A = {"bg1": "assets/bg1.webp", "bg2": "assets/bg2.webp", "bg3": "assets/bg3.webp", "bunny": "assets/bunny.webp", "doll": "assets/doll.webp", "robot": "assets/robot.webp", "school": "assets/school.webp", "cake": "assets/cake.webp", "bouquet": "assets/bouquet.webp", "gift": "assets/gift.webp", "balloons": "assets/balloons.webp", "p1": "assets/p1.webp", "p2": "assets/p2.webp", "p3": "assets/p3.webp"};
+const state = {step:0,bg:null,hero:null,details:[],phrase:null,recipient:"",author:""};
+const steps = [
+  {type:"bg",title:"Выбери фон",hint:"Выбери один из трёх фонов."},
+  {type:"hero",title:"Выбери героя",hint:"Выбери одного героя."},
+  {type:"details",title:"Добавь украшения",hint:"Выбери ровно 3 украшения."},
+  {type:"phrase",title:"Выбери надпись",hint:"Выбери одну надпись."},
+  {type:"names",title:"Добавь имена",hint:"Имена можно оставить пустыми."}
+];
+const labels = {
+  bg1:"Нежный",bg2:"Праздничный",bg3:"Уютный",
+  doll:"Кукла",robot:"Робот",bunny:"Зайчик",
+  school:"Школьные атрибуты",cake:"Торт",bouquet:"Букет",gift:"Подарок",balloons:"Шарики",
+  p1:"С праздником!",p2:"Поздравляю!",p3:"С днём рождения!"
+};
+
+function startGame(){
+  document.getElementById("start").style.display="none";
+  document.getElementById("builder").style.display="block";
+  render();
+}
+
+function cardHTML(){
+  let s = `<img class="layerimg bg" src="${A[state.bg||"bg1"]}">`;
+  if(state.hero) s += `<img class="layerimg hero" src="${A[state.hero]}">`;
+  state.details.forEach((d,i)=> s += `<img class="layerimg deco pos${i}" src="${A[d]}">`);
+  if(state.phrase) s += `<img class="layerimg phrase" src="${A[state.phrase]}">`;
+  if(state.recipient.trim()) s += `<div class="recipientPlain">${esc(state.recipient)}</div>`;
+  if(state.author.trim()) s += `<div class="name author">${esc(state.author)}</div>`;
+  return s;
+}
+
+function renderCard(){
+  document.getElementById("card").innerHTML = cardHTML();
+}
+
+function choice(id, cls=""){
+  const selected = (state.bg===id || state.hero===id || state.phrase===id || state.details.includes(id)) ? " selected" : "";
+  return `<button class="choice${selected}" onclick="pick('${id}')"><img class="thumb ${cls}" src="${A[id]}" alt=""></button>`;
+}
+
+function render(){
+  const st = steps[state.step];
+  document.getElementById("progress").textContent = `${state.step+1} / 5`;
+  document.getElementById("stepTitle").textContent = st.title;
+  document.getElementById("hint").textContent = st.hint;
+
+  let p = "";
+  if(st.type==="bg") p = `<div class="choices">${["bg1","bg2","bg3"].map(x=>choice(x,"bgthumb")).join("")}</div>`;
+  if(st.type==="hero") p = `<div class="choices">${["doll","robot","bunny"].map(x=>choice(x)).join("")}</div>`;
+  if(st.type==="details") p = `<div class="choices details">${["school","cake","bouquet","gift","balloons"].map(x=>choice(x)).join("")}</div>`;
+  if(st.type==="phrase") p = `<div class="choices">${["p1","p2","p3"].map(x=>choice(x)).join("")}</div>`;
+  if(st.type==="names") p = `
+    <div class="form">
+      <label>Имя получателя</label>
+      <input maxlength="24" placeholder="Например: Анна Петровна" value="${esc(state.recipient)}" oninput="state.recipient=this.value;renderCard()">
+      <label>Имя автора</label>
+      <input maxlength="24" placeholder="Например: Артём" value="${esc(state.author)}" oninput="state.author=this.value;renderCard()">
+    </div>`;
+  document.getElementById("panel").innerHTML = p;
+  renderCard();
+  document.getElementById("back").disabled = state.step===0;
+  document.getElementById("next").textContent = state.step===4 ? "Готово" : "Далее";
+  document.getElementById("next").disabled = !canNext();
+}
+
+function pick(id){
+  if(id.startsWith("bg")) state.bg=id;
+  else if(["doll","robot","bunny"].includes(id)) state.hero=id;
+  else if(id.startsWith("p")) state.phrase=id;
+  else {
+    let i = state.details.indexOf(id);
+    if(i>=0) state.details.splice(i,1);
+    else if(state.details.length<3) state.details.push(id);
+  }
+  render();
+}
+
+function canNext(){
+  const t = steps[state.step].type;
+  return t==="names" ||
+         (t==="bg" && state.bg) ||
+         (t==="hero" && state.hero) ||
+         (t==="details" && state.details.length===3) ||
+         (t==="phrase" && state.phrase);
+}
+
+document.getElementById("back").onclick = ()=>{ if(state.step>0){ state.step--; render(); } };
+document.getElementById("next").onclick = ()=>{ if(!canNext()) return; if(state.step<4){ state.step++; render(); } else showFinal(); };
+
+function showFinal(){
+  document.getElementById("work").style.display="none";
+  document.getElementById("nav").style.display="none";
+  document.getElementById("final").style.display="block";
+  document.getElementById("progress").textContent = "✓";
+  document.getElementById("finalCard").innerHTML = cardHTML();
+}
+
+function restart(){
+  Object.assign(state, {step:0,bg:null,hero:null,details:[],phrase:null,recipient:"",author:""});
+  document.getElementById("work").style.display="block";
+  document.getElementById("nav").style.display="block";
+  document.getElementById("final").style.display="none";
+  render();
+}
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[m]);
+}
+
+async function downloadCard(){
+  await document.fonts.load('600 64px "Caveat"');
+  const W=1480, H=2100;
+  const c=document.createElement("canvas"); c.width=W; c.height=H;
+  const ctx=c.getContext("2d");
+  const load=src=>new Promise((res,rej)=>{const im=new Image(); im.onload=()=>res(im); im.onerror=rej; im.src=src;});
+
+  const drawFit = (im,x,y,w,h)=> {
+    const r=Math.min(w/im.width,h/im.height), nw=im.width*r, nh=im.height*r;
+    ctx.drawImage(im, x+(w-nw)/2, y+(h-nh)/2, nw, nh);
+  };
+
+  const bg = await load(A[state.bg||"bg1"]);
+  ctx.drawImage(bg,0,0,W,H);
+
+  if(state.hero){
+    const im = await load(A[state.hero]);
+    drawFit(im, W*0.29, H*0.31, W*0.42, H*0.44);
+  }
+
+  const poses = [
+    [W*0.02, H*0.66, W*0.317, H*0.274],
+    [W*0.663, H*0.66, W*0.317, H*0.274],
+    [W*0.705, H*0.315, W*0.274, H*0.230]
+  ];
+  for(let i=0;i<state.details.length;i++){
+    const im = await load(A[state.details[i]]);
+    const [x,y,w,h] = poses[i];
+    drawFit(im,x,y,w,h);
+  }
+
+  if(state.phrase){
+    const im = await load(A[state.phrase]);
+    drawFit(im, W*0.09, H*0.055, W*0.82, H*0.18);
+  }
+
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+
+  if(state.recipient.trim()){
+    ctx.fillStyle="#b05a76";
+    ctx.font='600 86px "Caveat","Trebuchet MS",sans-serif';
+    ctx.fillText(state.recipient, W/2, H*0.272);
+  }
+
+  if(state.author.trim()){
+    ctx.fillStyle="#7b1e3a";
+    ctx.font='600 74px "Caveat","Trebuchet MS",sans-serif';
+    ctx.fillText(state.author, W/2, H*0.80);
+  }
+
+  const a=document.createElement("a");
+  a.download="otkrytka.png";
+  a.href=c.toDataURL("image/png");
+  a.click();
+}
+
+function roundRect(ctx,x,y,w,h,r,fill){
+  ctx.save();
+  ctx.fillStyle=fill;
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+</script>
+</body>
+</html>
